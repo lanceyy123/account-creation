@@ -52,9 +52,9 @@ app.get("/playwright-test", async (req, res) => {
         const result = await register(
             "mvpph",
             {
-                username: "test12345",
-                password: "Test12345",
-                mobile: "09xxxxxxxxx"
+                username: "rtygevrty",
+                password: "022806",
+                mobile: "09653465789"
             }
         );
 
