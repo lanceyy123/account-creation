@@ -440,6 +440,8 @@ th{
     <option value="mvpph">MVPPH</option>
     <option value="game87">87Game</option>
     <option value="roostervolt">RoosterVolt</option>
+	<option value="luckycalico">Luckycalico</option>
+	
 </select>
 
 
@@ -570,7 +572,7 @@ loadAccounts();
 const token = localStorage.getItem("jwt");
 
 if (!token) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 document.getElementById("registerForm")
 .addEventListener("submit", async (e) => {
@@ -716,7 +718,7 @@ document
     localStorage.removeItem("authToken");
     localStorage.removeItem("mobile");
 
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 
 });
 </script>

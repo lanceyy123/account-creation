@@ -17,7 +17,14 @@ export const SITES = {
         name: "RoosterVolt",
         siteUrl: "https://www.roostervolt.win",
         merchant: "72phtlbs2",
-        captchaId: "9364f0c295cf768a370efd73f8568fea"
+        captchaId: "59df97a1e0cb40b4abb4743cb2bf9827"
+
+    },
+     luckycalico: {
+        name: "Luckycalico",
+        siteUrl: "https://www.luckycalico.ph",
+        merchant: "luckycaf3",
+        captchaId: "10578edd4000cf44530a193e12f275de"
 
     }
 

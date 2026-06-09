@@ -164,6 +164,38 @@ button:disabled{
 
 
 <script>
+function showModal(
+    title,
+    message,
+    success = true
+){
+
+    document.getElementById(
+        "modalTitle"
+    ).innerText = title;
+
+    document.getElementById(
+        "modalMessage"
+    ).innerText = message;
+
+    const icon =
+        document.getElementById(
+            "modalIcon"
+        );
+
+    icon.innerHTML =
+        success ? "✓" : "✕";
+
+    icon.style.background =
+        success
+        ? "linear-gradient(135deg,#22c55e,#16a34a)"
+        : "linear-gradient(135deg,#ef4444,#dc2626)";
+
+    document.getElementById(
+        "messageModal"
+    ).style.display = "flex";
+}
+
 
 let countdown = 180;
 let countdownTimer;
@@ -251,6 +283,10 @@ try {
     console.log("VERIFY RESULT:", result);
 
 if (result.success === true) {
+const jwtToken =
+    localStorage.getItem("jwt");
+
+if(jwtToken){
 
     await fetch(
         "https://account-creation-production-3c5b.up.railway.app/save-account",
@@ -258,46 +294,120 @@ if (result.success === true) {
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
-                "Authorization":
-                    localStorage.getItem("jwt")
+                "Authorization": jwtToken
             },
-body:JSON.stringify({
-    site:
-        localStorage.getItem("site"),
-
-    username:
-        localStorage.getItem("createdUsername"),
-
-    mobile:
-        localStorage.getItem("mobile"),
-
-    password:
-        localStorage.getItem("createdPassword")
-})
+            body: JSON.stringify({
+                site: localStorage.getItem("site"),
+                username: localStorage.getItem("createdUsername"),
+                mobile: localStorage.getItem("mobile"),
+                password: localStorage.getItem("createdPassword")
+            })
         }
     );
 
-    document.getElementById("loading").style.display = "none";
+}
 
-    btn.disabled = false;
-    btn.innerHTML = "Verify OTP";
+document.getElementById("loading").style.display = "none";
 
-    document.getElementById("success").style.display = "block";
+btn.disabled = false;
+btn.innerHTML = "Verify OTP";
 
-    document.getElementById("success").innerHTML =
-        "✅ OTP Verified Successfully";
+document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div id="successModal" style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.7);
+        backdrop-filter:blur(8px);
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        z-index:99999;
+    ">
+        <div style="
+            width:380px;
+            background:#0f172a;
+            border:1px solid rgba(255,255,255,.1);
+            border-radius:20px;
+            padding:30px;
+            text-align:center;
+            box-shadow:0 0 40px rgba(139,92,246,.25);
+        ">
+            <div style="
+                width:70px;
+                height:70px;
+                margin:auto;
+                border-radius:50%;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:35px;
+                color:white;
+                background:linear-gradient(
+                    135deg,
+                    #8b5cf6,
+                    #ec4899
+                );
+            ">
+                ✓
+            </div>
 
-    setTimeout(() => {
-        window.location.href = "dashboard.html";
-    }, 2000);
+            <h2 style="
+                color:white;
+                margin-top:20px;
+            ">
+                OTP Verified
+            </h2>
+
+            <p style="
+                color:#cbd5e1;
+                margin-top:15px;
+                line-height:1.8;
+            ">
+               Your account has been verified successfully.
+            </p>
+
+            <button id="continueBtn" style="
+                width:100%;
+                height:50px;
+                border:none;
+                border-radius:12px;
+                margin-top:20px;
+                color:white;
+                font-weight:700;
+                cursor:pointer;
+                background:linear-gradient(
+                    90deg,
+                    #8b5cf6,
+                    #ec4899
+                );
+            ">
+                Continue
+            </button>
+        </div>
+    </div>
+    `
+);
+
+document
+.getElementById("continueBtn")
+.addEventListener("click", () => {
+
+    window.location.href =
+        "dashboard.html";
+
+});
 
 } else {
 
-    alert(
-        result.message ||
-        result.error ||
-        "❌ Invalid OTP"
-    );
+    showModal(
+    "Invalid OTP",
+    result.message ||
+    result.error ||
+    "The OTP code is invalid.",
+    false
+);
 
 }
 
@@ -305,7 +415,11 @@ body:JSON.stringify({
 
     console.error(err);
 
-    alert("❌ Verification Failed");
+    showModal(
+    "Verification Failed",
+    "Unable to verify OTP.",
+    false
+);
 
 }
 
@@ -350,9 +464,11 @@ body:JSON.stringify({
 
             if(result.success){
 
-                alert(
-                    "OTP resent successfully"
-                );
+                showModal(
+    "OTP Sent",
+    "A new OTP has been sent to your mobile number.",
+    true
+);
 
                 startCountdown();
 
@@ -362,10 +478,12 @@ body:JSON.stringify({
                 resendBtn.innerHTML =
                     "Resend OTP";
 
-                alert(
-                    result.error ||
-                    "Failed to resend OTP"
-                );
+                showModal(
+    "Resend Failed",
+    result.error ||
+    "Failed to resend OTP.",
+    false
+);
 
             }
 
@@ -377,15 +495,58 @@ body:JSON.stringify({
             resendBtn.innerHTML =
                 "Resend OTP";
 
-            alert(
-                "Failed to resend OTP"
-            );
+            showModal(
+    "Resend Failed",
+    "Failed to resend OTP.",
+    false
+);
 
         }
 
     }
 );
-</script>
+window.addEventListener("DOMContentLoaded", () => {
 
+    document
+    .getElementById("modalBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            document.getElementById(
+                "messageModal"
+            ).style.display = "none";
+
+        }
+    );
+
+});
+</script>
+<div id="messageModal" class="modal" style="display:none;">
+    <div class="modal-content">
+
+        <div id="modalIcon" class="success-icon">
+            ✓
+        </div>
+
+        <h2 id="modalTitle">
+            Success
+        </h2>
+
+        <div id="modalMessage"
+             style="
+             color:#cbd5e1;
+             line-height:1.8;
+             margin-bottom:20px;">
+        </div>
+
+        <button
+            id="modalBtn"
+            type="button">
+            OK
+        </button>
+
+    </div>
+</div>
 </body>
 </html>
