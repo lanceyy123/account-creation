@@ -47,30 +47,27 @@ app.get("/db-test", async (req, res) => {
 
 });
 app.get("/playwright-test", async (req, res) => {
-
     try {
 
-        const browser = await chromium.launch({
-            headless: true,
-            args: ["--no-sandbox"]
-        });
+        const result = await register(
+            "mvpph",
+            {
+                username: "test12345",
+                password: "Test12345",
+                mobile: "09xxxxxxxxx"
+            }
+        );
 
-        await browser.close();
-
-        res.json({
-            success: true,
-            message: "Playwright works"
-        });
+        res.json(result);
 
     } catch(err) {
 
-        res.status(500).json({
-            success: false,
-            error: err.message
+        res.json({
+            success:false,
+            error:err.message
         });
 
     }
-
 });
 
 
