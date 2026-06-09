@@ -15,6 +15,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "API Online"
+    });
+});
+
+
 function auth(req, res, next){
 
     const token =
