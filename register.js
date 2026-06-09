@@ -8,6 +8,9 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { SITES } from "./configs.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export async function register(
     site,
     userData
@@ -32,9 +35,6 @@ export async function register(
 
     const CAPTCHA_ID =
         config.captchaId;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // ================= CONFIG =================
 const CAPSOLVER_API_KEY = 'CAP-DEEB0ABB2D8C6CA95E9C61AA28A9D39E80E5C9686F327711C14B06143F766C42';
@@ -176,34 +176,25 @@ async function encryptPayload(page, payload, rsaKey) {
 
     // Full payload from successful registration (including all fields)
     const payload = {
-      username,
-      password,
-      confirmPassword: password,
-      payeeName: '',
-      email: '',
-      qqNum: '',
-      mobileNum: mobile,
-      recommenderId: '',
-      captcha: '',
-      verificationCode: '',
-      affiliateCode: 'www',
-      paymentPassword: '',
-      line: '',
-      whatsapp: '',
-      facebook: '',
-      wechat: '',
-      idNumber: '',
-      referralCode: '',
-      geetestValidateV4: {
-        captcha_id: CAPTCHA_ID,
-        ...geetestSolution
-      },
-      login: true,
-      registerUrl: `${SITE_URL}/`,
-      domain: config.domain,
-      registerMethod: 'WEB',
-      loginDeviceId: deviceId
-    };
+  username,
+  password,
+  confirmPassword: password,
+
+  mobileNum: mobile,
+
+  affiliateCode: config.affiliateCode,
+  domain: config.domain,
+
+  geetestValidateV4: {
+    captcha_id: CAPTCHA_ID,
+    ...geetestSolution
+  },
+
+  login: true,
+  registerUrl: SITE_URL,
+  registerMethod: 'WEB',
+  loginDeviceId: deviceId
+};
 
     console.log(`Registering: ${username} / ${password} / ${mobile}`);
 

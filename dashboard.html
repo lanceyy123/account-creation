@@ -450,6 +450,9 @@ th{
     type="text"
     id="username"
     required
+    minlength="6"
+    maxlength="12"
+    placeholder="6-12 characters"
 >
 
 <label>Mobile Number This Will be Used For OTP</label>
@@ -583,6 +586,15 @@ document.getElementById("registerForm")
     const mobile = document.getElementById("mobile").value.trim();
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirm").value;
+    if (username.length < 6 || username.length > 12) {
+    alert("Username must be 6-12 characters long.");
+    return;
+}
+
+if (!/^[a-zA-Z0-9]{6,12}$/.test(username)) {
+    alert("Username must contain only letters and numbers.");
+    return;
+}     
 
     if (!username || !mobile || !password || !confirm) {
         alert("Please fill in all fields.");
