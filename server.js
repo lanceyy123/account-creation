@@ -8,7 +8,7 @@ import { db } from "./db.js";
 import "dotenv/config";
 import { SITES } from "./configs.js";
 import { chromium } from "playwright";
-import express from "express";
+
 
 const app = express();
 
