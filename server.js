@@ -7,8 +7,8 @@ import jwt from "jsonwebtoken";
 import { db } from "./db.js";
 import "dotenv/config";
 import { SITES } from "./configs.js";
-
-
+import { chromium } from "playwright";
+import express from "express";
 
 const app = express();
 
@@ -46,7 +46,32 @@ app.get("/db-test", async (req, res) => {
     }
 
 });
+app.get("/playwright-test", async (req, res) => {
 
+    try {
+
+        const browser = await chromium.launch({
+            headless: true,
+            args: ["--no-sandbox"]
+        });
+
+        await browser.close();
+
+        res.json({
+            success: true,
+            message: "Playwright works"
+        });
+
+    } catch(err) {
+
+        res.status(500).json({
+            success: false,
+            error: err.message
+        });
+
+    }
+
+});
 
 
 function auth(req, res, next){
