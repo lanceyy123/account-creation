@@ -88,6 +88,13 @@ const {
 } = req.body;
 
 const config = SITES[site];
+
+if (!config) {
+    return res.status(400).json({
+        success: false,
+        error: "Invalid site"
+    });
+}
 console.log("VERIFY REQUEST:");
 console.log("Mobile:", mobile);
 console.log("OTP:", otp);
@@ -150,6 +157,13 @@ app.post("/send-otp", async (req, res) => {
         } = req.body;
 
         const config = SITES[site];
+
+if (!config) {
+    return res.status(400).json({
+        success: false,
+        error: "Invalid site"
+    });
+}
 
         const response = await axios.post(
             `${config.siteUrl}/wps/v2/verification/sms/send`,
@@ -444,11 +458,8 @@ app.post("/create-account", async (req,res)=>{
 });
 
 
+const PORT = process.env.PORT || 3000;
 
-console.log(
-    "JWT:",
-    process.env.JWT_SECRET
-);
-app.listen(3000, () => {
-console.log("Server running on port 3000");
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
