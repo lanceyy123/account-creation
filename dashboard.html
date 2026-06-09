@@ -7,6 +7,26 @@
 
 
 <style>
+
+    .password-box{
+    position:relative;
+}
+
+.password-box input{
+    width:100%;
+}
+
+.toggle-password{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+    user-select:none;
+}
+
+
 .modal{
     display:none;
     position:fixed;
@@ -467,18 +487,38 @@ th{
 >
 
 <label>Password</label>
-<input
-    type="password"
-    id="password"
-    required
->
+
+<div class="password-box">
+    <input
+        type="password"
+        id="password"
+        required
+    >
+
+    <span
+        class="toggle-password"
+        onclick="togglePassword('password', this)"
+    >
+        👁️
+    </span>
+</div>
 
 <label>Confirm Password</label>
-<input
-    type="password"
-    id="confirm"
-    required
->
+
+<div class="password-box">
+    <input
+        type="password"
+        id="confirm"
+        required
+    >
+
+    <span
+        class="toggle-password"
+        onclick="togglePassword('confirm', this)"
+    >
+        👁️
+    </span>
+</div>
 
 <button type="submit">
     ✨ Create Account
@@ -577,6 +617,29 @@ const token = localStorage.getItem("jwt");
 if (!token) {
     window.location.href = "index.html";
 }
+document
+.getElementById("site")
+.addEventListener("change", () => {
+
+    const site =
+        document.getElementById("site").value;
+
+    const mobile =
+        document.getElementById("mobile");
+
+    if(site === "luckycalico"){
+
+        mobile.maxLength = 10;
+        mobile.placeholder = "9762086953";
+
+    }else{
+
+        mobile.maxLength = 11;
+        mobile.placeholder = "09123456789";
+
+    }
+
+});
 document.getElementById("registerForm")
 .addEventListener("submit", async (e) => {
 
@@ -606,10 +669,28 @@ if (!/^[a-zA-Z0-9]{6,12}$/.test(username)) {
         return;
     }
 
-    if (mobile.length !== 10 && mobile.length !== 11) {
-        alert("Mobile number must be 10 or 11 digits.");
+    const site =
+    document.getElementById("site").value;
+
+if(site === "luckycalico"){
+
+    if(!/^\d{10}$/.test(mobile)){
+        alert(
+            "LuckyCalico mobile number must be exactly 10 digits."
+        );
         return;
     }
+
+}else{
+
+    if(!/^\d{10,11}$/.test(mobile)){
+        alert(
+            "Mobile number must be 10 or 11 digits."
+        );
+        return;
+    }
+
+}
 
     if (password !== confirm) {
         alert("Passwords do not match.");
@@ -733,6 +814,26 @@ document
     window.location.href = "index.html";
 
 });
+
+function togglePassword(id, element){
+
+    const input =
+        document.getElementById(id);
+
+    if(input.type === "password"){
+
+        input.type = "text";
+        element.innerHTML = "🙈";
+
+    }else{
+
+        input.type = "password";
+        element.innerHTML = "👁️";
+
+    }
+
+}
+
 </script>
 <div id="successModal" class="modal">
 
