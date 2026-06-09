@@ -365,7 +365,7 @@ document.getElementById("loading").style.display = "block";
     try {
 
         const response = await fetch(
-            "http://account-creation-production-3c5b.up.railway.app/register",
+            "https://account-creation-production-3c5b.up.railway.app/register",
             {
                 method: "POST",
                 headers: {
@@ -380,20 +380,35 @@ document.getElementById("loading").style.display = "block";
 if(result.success){
 
 
-    localStorage.setItem(
-        "authToken",
-        result.token
-    );
+localStorage.setItem(
+    "site",
+    document.getElementById("site").value
+);
 
-    localStorage.setItem(
-        "mobile",
-        result.mobile
-    );
+localStorage.setItem(
+    "authToken",
+    result.token
+);
 
-    localStorage.setItem(
-        "username",
-        result.username
-    );
+localStorage.setItem(
+    "mobile",
+    result.mobile
+);
+
+localStorage.setItem(
+    "username",
+    result.username
+);
+
+localStorage.setItem(
+    "createdUsername",
+    result.username
+);
+
+localStorage.setItem(
+    "createdPassword",
+    result.password
+);
 	
 submitBtn.disabled = false;
 submitBtn.innerHTML = "✨ Create Account";
@@ -404,16 +419,17 @@ document.getElementById("successDetails").innerHTML = `
 `;
 
 await fetch(
-    "http://account-creation-production-3c5b.up.railway.app/send-otp",
+    "https://account-creation-production-3c5b.up.railway.app/send-otp",
     {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            mobile: result.mobile,
-            token: result.token
-        })
+			body: JSON.stringify({
+				site: localStorage.getItem("site"),
+				mobile: result.mobile,
+				token: result.token
+			})
     }
 );
 
