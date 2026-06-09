@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Create Account</title>
+
+
+
+<style>
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(8px);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
+}
+
+.modal-content{
+
+    width:380px;
+
+    background:#0f172a;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:
+    0 0 40px rgba(139,92,246,.25);
+}
+
+.success-icon{
+
+    width:70px;
+    height:70px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:35px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #8b5cf6,
+        #ec4899
+    );
+}
+
+.modal-content h2{
+
+    margin-top:20px;
+    margin-bottom:20px;
+
+    color:white;
+}
+
+#successDetails{
+
+    color:#cbd5e1;
+
+    line-height:2;
+    margin-bottom:25px;
+}
+
+#closeModal{
+
+    width:100%;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    background:
+    linear-gradient(
+        90deg,
+        #8b5cf6,
+        #ec4899
+    );
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter, Arial, sans-serif;
+}
+
+.dashboard-card{
+    flex:2;
+}
+
+.create-card{
+    flex:1;
+}
+
+.container{
+    width:100%;
+    max-width:1600px;
+
+    margin:auto;
+
+    display:flex;
+    gap:30px;
+
+    align-items:flex-start;
+}
+#accountsTable{
+    max-height:500px;
+    overflow-y:auto;
+}
+
+@media (max-width: 900px){
+
+    .container{
+        flex-direction:column;
+        width:100%;
+    }
+
+.dashboard-card{
+    flex:2;
+    min-width:0;
+}
+
+.create-card{
+    flex:1;
+    min-width:350px;
+}
+
+    .logout-btn{
+        position:fixed;
+        top:15px;
+        right:15px;
+        width:100px !important;
+    }
+
+    #welcomeUser{
+        position:static;
+        display:block;
+        margin-bottom:15px;
+        text-align:center;
+    }
+
+    body{
+        padding:15px;
+    }
+
+}
+
+#accountsTable{
+    display:block;
+    max-height:400px;
+    overflow-y:auto;
+}
+
+body{
+    min-height:100vh;
+    overflow-y:auto;
+
+    padding:30px;
+
+    display:flex;
+    gap:30px;
+
+    align-items:flex-start;
+    justify-content:center;
+    flex-wrap:wrap;
+
+    background:
+    radial-gradient(circle at top left,#43286f 0%,transparent 25%),
+    radial-gradient(circle at bottom right,#61204b 0%,transparent 25%),
+    #020817;
+
+    color:white;
+}
+
+.card {
+    width:auto;
+
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 30px;
+
+    margin: 0 auto; /* centers horizontally */
+
+    box-shadow:
+        0 0 40px rgba(139,92,246,.15),
+        0 8px 30px rgba(0,0,0,.35);
+}
+
+h1{
+    text-align:center;
+    font-size:34px;
+    font-weight:700;
+}
+
+p{
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    margin-top:15px;
+    color:#e2e8f0;
+    font-size:14px;
+}
+
+input,
+select{
+    width:100%;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:0 15px;
+
+    background:#f1f5f9;
+
+    font-size:15px;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+}
+
+button{
+    width:100%;
+
+    margin-top:25px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-weight:700;
+
+    color:white;
+
+    cursor:pointer;
+
+    background:
+    linear-gradient(
+        90deg,
+        #8b5cf6,
+        #ec4899
+    );
+
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+button:disabled{
+    opacity:.7;
+    cursor:not-allowed;
+}
+
+#loading{
+    text-align:center;
+    margin-top:15px;
+    color:#c084fc;
+    font-weight:600;
+}
+
+.footer{
+    margin-top:25px;
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+}
+#closeModal{
+    width:100%;
+    height:50px;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-weight:700;
+    cursor:pointer !important;
+    pointer-events:auto !important;
+
+    background:
+    linear-gradient(
+        90deg,
+        #8b5cf6,
+        #ec4899
+    );
+}
+
+.logout-btn{
+    position:fixed;
+
+    top:20px;
+    right:20px;
+
+    width:120px !important;
+    height:45px !important;
+
+    margin:0 !important;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    z-index:99999;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ef4444,
+        #dc2626
+    );
+}
+#welcomeUser{
+    position:fixed;
+    top:20px;
+    left:20px;
+    color:white;
+    font-weight:bold;
+}
+
+table{
+    display:block;
+    overflow-x:auto;
+    white-space:nowrap;
+}
+
+th,
+td{
+    border:1px solid rgba(255,255,255,.1);
+    padding:10px;
+    text-align:left;
+}
+
+th{
+    background:rgba(255,255,255,.08);
+}
+
+</style>
+</head>
+<body>
+<button id="logoutBtn" class="logout-btn">
+    Logout
+</button>
+
+<div id="welcomeUser"></div>
+
+<div class="container">
+
+<div class="card dashboard-card">
+
+    <h1>Dashboard</h1>
+
+    <p id="userText"></p>
+
+    <h2>Sites</h2>
+
+    <table id="sitesTable">
+
+<thead>
+<tr>
+    <th>Site</th>
+    <th>Accounts</th>
+</tr>
+</thead>
+
+        <tbody id="sitesBody"></tbody>
+
+    </table>
+
+    <br>
+
+    <h2>All Accounts</h2>
+
+    <table id="accountsTable">
+
+<thead>
+<tr>
+    <th>Site</th>
+    <th>Username</th>
+    <th>Mobile</th>
+</tr>
+</thead>
+
+        <tbody></tbody>
+
+    </table>
+
+</div>
+
+<div class="card create-card">
+
+<h1>Create your account</h1>
+<p>Join us in less than a minute.</p>
+
+    <form id="registerForm">
+
+        <label>Platform</label>
+
+
+<select id="site">
+    <option value="mvpph">MVPPH</option>
+    <option value="game87">87Game</option>
+    <option value="roostervolt">RoosterVolt</option>
+</select>
+
+
+<label>Username</label>
+<input
+    type="text"
+    id="username"
+    required
+>
+
+<label>Mobile Number This Will be Used For OTP</label>
+<input
+    type="text"
+    id="mobile"
+    inputmode="numeric"
+    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+    required
+    maxlength="11"
+    placeholder="09123456789"
+>
+
+<label>Password</label>
+<input
+    type="password"
+    id="password"
+    required
+>
+
+<label>Confirm Password</label>
+<input
+    type="password"
+    id="confirm"
+    required
+>
+
+<button type="submit">
+    ✨ Create Account
+</button>
+
+<div id="loading" style="display:none;">
+    🔄 Creating account...
+</div>
+    </form>
+<div class="footer">
+    By creating an account, you agree to our Terms and Privacy Policy.
+</div>
+</div>
+
+<script>
+
+
+
+const username =
+    localStorage.getItem("loggedInUser")
+
+document.getElementById(
+    "welcomeUser"
+).innerHTML =
+    `Welcome ${username}`;
+
+
+
+    async function loadAccounts(){
+
+    const response =
+        await fetch(
+            "http://localhost:3000/accounts",
+            {
+                headers:{
+                    Authorization:
+                        localStorage.getItem("jwt")
+                }
+            }
+        );
+
+    const accounts =
+        await response.json();
+const siteStats = {};
+
+accounts.forEach(acc => {
+
+    if(!siteStats[acc.site]){
+        siteStats[acc.site] = 0;
+    }
+
+    siteStats[acc.site]++;
+
+});
+
+const sitesBody =
+    document.getElementById("sitesBody");
+
+sitesBody.innerHTML = "";
+
+Object.keys(siteStats).forEach(site => {
+
+    sitesBody.innerHTML += `
+        <tr>
+            <td>${site}</td>
+            <td>${siteStats[site]}</td>
+        </tr>
+    `;
+
+});
+    const tbody =
+        document.querySelector(
+            "#accountsTable tbody"
+        );
+
+    tbody.innerHTML = "";
+
+    accounts.forEach(account => {
+
+tbody.innerHTML += `
+<tr>
+    <td>${account.site}</td>
+    <td>${account.username}</td>
+    <td>${account.mobile}</td>
+</tr>
+`;
+
+    });
+
+}
+
+loadAccounts();
+
+const token = localStorage.getItem("jwt");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+document.getElementById("registerForm")
+.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+
+    if (!username || !mobile || !password || !confirm) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    if (!/^\d+$/.test(mobile)) {
+        alert("Mobile number must contain numbers only.");
+        return;
+    }
+
+    if (mobile.length !== 10 && mobile.length !== 11) {
+        alert("Mobile number must be 10 or 11 digits.");
+        return;
+    }
+
+    if (password !== confirm) {
+        alert("Passwords do not match.");
+        return;
+    }
+    
+
+    const payload = {
+        site: document.getElementById("site").value,
+        username,
+        mobile,
+        password
+    };
+    localStorage.setItem(
+    "site",
+    document.getElementById("site").value
+);
+
+const submitBtn =
+    document.querySelector("button[type='submit']");
+
+submitBtn.disabled = true;
+submitBtn.innerHTML = "🔄 Creating Account...";
+
+document.getElementById("loading").style.display = "block";
+    try {
+
+        const response = await fetch(
+            "http://localhost:3000/register",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        const result = await response.json();
+
+if(result.success){
+
+    localStorage.setItem(
+        "authToken",
+        result.token
+    );
+
+    localStorage.setItem(
+        "mobile",
+        result.mobile
+    );
+
+    localStorage.setItem(
+        "createdUsername",
+        result.username
+    );
+
+    localStorage.setItem(
+        "createdPassword",
+        result.password
+    );
+	
+submitBtn.disabled = false;
+submitBtn.innerHTML = "✨ Create Account";
+document.getElementById("successDetails").innerHTML = `
+    <b>Username:</b> ${result.username}<br>
+    <b>Password:</b> ${result.password}<br>
+    <b>Mobile:</b> ${result.mobile}
+`;
+
+document.getElementById("successModal").style.display = "flex";
+
+    document.getElementById("registerForm").reset();
+	document.getElementById("loading").style.display = "none";
+
+} else {
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "✨ Create Account";
+
+    document.getElementById("loading").style.display = "none";
+
+    alert(result.error || "Registration failed");
+
+}
+
+    } catch(err){
+
+    document.getElementById("loading").style.display = "none";
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "✨ Create Account";
+
+    console.error(err);
+
+    alert("Backend connection failed");
+
+}
+
+});
+window.onload = () => {
+
+    document
+    .getElementById("closeModal")
+    .addEventListener("click", () => {
+
+        window.location.href = "otp.html";
+
+    });
+
+};
+document
+.getElementById("logoutBtn")
+.addEventListener("click", () => {
+
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("username");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("mobile");
+
+    window.location.href = "login.html";
+
+});
+</script>
+<div id="successModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="success-icon">✓</div>
+
+        <h2>Account Created!</h2>
+
+        <div id="successDetails"></div>
+
+<button
+    id="closeModal"
+    type="button">
+    Continue
+</button>
+
+    </div>
+
+</div>
+</div>
+</body>
+</html>
