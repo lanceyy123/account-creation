@@ -365,7 +365,7 @@ document.getElementById("loading").style.display = "block";
     try {
 
         const response = await fetch(
-            "http://localhost:3000/register",
+            "http://account-creation-production-3c5b.up.railway.app/register",
             {
                 method: "POST",
                 headers: {
@@ -404,7 +404,7 @@ document.getElementById("successDetails").innerHTML = `
 `;
 
 await fetch(
-    "http://localhost:3000/send-otp",
+    "http://account-creation-production-3c5b.up.railway.app/send-otp",
     {
         method: "POST",
         headers: {

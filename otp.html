@@ -231,7 +231,7 @@ document
 try {
 
     const response = await fetch(
-        "http://localhost:3000/verify-otp",
+        "http://account-creation-production-3c5b.up.railway.app/verify-otp",
         {
             method: "POST",
             headers: {
@@ -253,7 +253,7 @@ try {
 if (result.success === true) {
 
     await fetch(
-        "http://localhost:3000/save-account",
+        "http://account-creation-production-3c5b.up.railway.app/save-account",
         {
             method:"POST",
             headers:{
@@ -326,7 +326,7 @@ resendBtn.addEventListener(
         try{
 
             const response = await fetch(
-                "http://localhost:3000/send-otp",
+                "http://account-creation-production-3c5b.up.railway.app/send-otp",
                 {
                     method:"POST",
                     headers:{
