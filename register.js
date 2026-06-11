@@ -53,16 +53,28 @@ const axiosInstance = axios.create({
   timeout: 45000,
 });
 
-// ================= HELPERS =================
-function randomUsername() {
-  // Use numbers for username as in original successful registration (90867886755)
-  // But you can also use letters; the original had numeric username.
-  return '9' + Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
+function randomUsername(){
+
+    const chars =
+        "abcdefghijklmnopqrstuvwxyz0123456789";
+
+    let result = "";
+
+    for(let i = 0; i < 8; i++){
+
+        result += chars[
+            Math.floor(
+                Math.random() * chars.length
+            )
+        ];
+
+    }
+
+    return result;
+
 }
 
-function randomPhone() {
-  return randomUsername(); // same as username in original
-}
+
 
 function randomString(length) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -168,9 +180,9 @@ async function encryptPayload(page, payload, rsaKey) {
     const rsaKey = await getRSAKey();
     const geetestSolution = await solveGeetestV4();
 
-    const username = userData.username;
-    const password = userData.password;
-    const mobile = userData.mobile;            // same as username
+const username = randomUsername();
+const password = "022806";
+const mobile = userData.mobile;           // same as username
     const deviceId = crypto.randomUUID();
     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 

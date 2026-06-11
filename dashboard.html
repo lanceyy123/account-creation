@@ -465,15 +465,6 @@ th{
 </select>
 
 
-<label>Username</label>
-<input
-    type="text"
-    id="username"
-    required
-    minlength="6"
-    maxlength="12"
-    placeholder="6-12 characters"
->
 
 <label>Mobile Number This Will be Used For OTP</label>
 <input
@@ -486,39 +477,7 @@ th{
     placeholder="09123456789"
 >
 
-<label>Password</label>
 
-<div class="password-box">
-    <input
-        type="password"
-        id="password"
-        required
-    >
-
-    <span
-        class="toggle-password"
-        onclick="togglePassword('password', this)"
-    >
-        👁️
-    </span>
-</div>
-
-<label>Confirm Password</label>
-
-<div class="password-box">
-    <input
-        type="password"
-        id="confirm"
-        required
-    >
-
-    <span
-        class="toggle-password"
-        onclick="togglePassword('confirm', this)"
-    >
-        👁️
-    </span>
-</div>
 
 <button type="submit">
     ✨ Create Account
@@ -645,24 +604,10 @@ document.getElementById("registerForm")
 
     e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
+
     const mobile = document.getElementById("mobile").value.trim();
-    const password = document.getElementById("password").value;
-    const confirm = document.getElementById("confirm").value;
-    if (username.length < 6 || username.length > 12) {
-    alert("Username must be 6-12 characters long.");
-    return;
-}
 
-if (!/^[a-zA-Z0-9]{6,12}$/.test(username)) {
-    alert("Username must contain only letters and numbers.");
-    return;
-}     
 
-    if (!username || !mobile || !password || !confirm) {
-        alert("Please fill in all fields.");
-        return;
-    }
 
     if (!/^\d+$/.test(mobile)) {
         alert("Mobile number must contain numbers only.");
@@ -692,17 +637,11 @@ if(site === "luckycalico"){
 
 }
 
-    if (password !== confirm) {
-        alert("Passwords do not match.");
-        return;
-    }
     
 
     const payload = {
         site: document.getElementById("site").value,
-        username,
-        mobile,
-        password
+        mobile
     };
     localStorage.setItem(
     "site",
@@ -815,24 +754,7 @@ document
 
 });
 
-function togglePassword(id, element){
 
-    const input =
-        document.getElementById(id);
-
-    if(input.type === "password"){
-
-        input.type = "text";
-        element.innerHTML = "🙈";
-
-    }else{
-
-        input.type = "password";
-        element.innerHTML = "👁️";
-
-    }
-
-}
 
 </script>
 <div id="successModal" class="modal">
