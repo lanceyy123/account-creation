@@ -183,12 +183,74 @@ console.log("Token:", token);
     JSON.stringify(response.data, null, 2)
 );
 
-    console.log(
+console.log(
     "VERIFY OTP:",
     mobile,
     otp
 );
-    res.json(response.data);
+
+if(response.data.success){
+
+    try{
+
+        const ticketResponse = await axios.get(
+            `${config.siteUrl}/wps/relay/PROMOFE_getClaimTicketList?isApp=N&status=AVAILABLE&isAll=N&_=${Date.now()}`,
+            {
+                headers:{
+                    Authorization: token,
+                    Merchant: config.merchant,
+                    Language: "TY"
+                }
+            }
+        );
+
+        const registerBonus =
+            ticketResponse.data.value.find(
+                x => x.name === "Register Bonus"
+            );
+
+        if(registerBonus){
+
+            const claimResponse =
+                await axios.post(
+                    `${config.siteUrl}/wps/relay/PROMOFE_claimTicket`,
+                    {
+                        transactionId:
+                            registerBonus.transactionId,
+
+                        isApp:"N"
+                    },
+                    {
+                        headers:{
+                            Authorization: token,
+                            Merchant: config.merchant,
+                            Language: "TY",
+                            Origin: config.siteUrl,
+                            Referer: `${config.siteUrl}/index`
+                        }
+                    }
+                );
+
+            console.log(
+                "BONUS CLAIMED:",
+                claimResponse.data
+            );
+
+        }
+
+    }catch(claimErr){
+
+        console.error(
+            "CLAIM ERROR:",
+            claimErr.response?.data ||
+            claimErr.message
+        );
+
+    }
+
+}
+
+res.json(response.data);
 
 } catch (err) {
     console.error(err.response?.data || err.message);
