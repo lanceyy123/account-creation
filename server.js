@@ -609,10 +609,12 @@ app.get("/accounts", auth, async (req, res) => {
 
 app.post("/create-account", auth, async (req,res)=>{
 
-const {
-    site,
-    mobile
-} = req.body;
+try{
+
+    const {
+        site,
+        mobile
+    } = req.body;
 
     const result =
         await register(
@@ -623,6 +625,20 @@ const {
         );
 
     res.json(result);
+
+}catch(err){
+
+    console.error(
+        "CREATE ACCOUNT ERROR:",
+        err.message
+    );
+
+    res.status(500).json({
+        success:false,
+        error:err.message
+    });
+
+}
 
 });
 

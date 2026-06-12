@@ -53,11 +53,18 @@ const PROXY_PASSWORD =
 const PROXY_URL =
 `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_SERVER}`;
 
-const proxyAgent = new HttpsProxyAgent(PROXY_URL);
+const proxyAgent = new HttpsProxyAgent(
+    PROXY_URL,
+    {
+        keepAlive: true
+    }
+);
 const axiosInstance = axios.create({
   httpsAgent: proxyAgent,
   httpAgent: proxyAgent,
   timeout: 90000,
+  maxRedirects: 5,
+  validateStatus: () => true
 });
 function randomUsername(){
 
@@ -83,7 +90,46 @@ function randomUsername(){
 
 }
 
+async function retry(fn, retries = 3){
 
+    let lastError;
+
+    for(let i = 0; i < retries; i++){
+
+        try{
+
+            return await fn();
+
+        }catch(err){
+
+            lastError = err;
+
+            console.log(
+                `Retry ${i + 1}/${retries}:`,
+                err.code || err.message
+            );
+
+            if(
+                err.code !== "ECONNRESET" &&
+                err.code !== "ETIMEDOUT" &&
+                err.code !== "ECONNABORTED" &&
+                err.code !== "EPIPE" &&
+                err.code !== "ENOTFOUND"
+            ){
+                throw err;
+            }
+
+            await new Promise(
+                r => setTimeout(r, 3000)
+            );
+
+        }
+
+    }
+
+    throw lastError;
+
+}
 
 function randomString(length) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -174,6 +220,8 @@ async function encryptPayload(page, payload, rsaKey) {
   }, { payload, rsaKey });
 }
 
+
+
 // ================= MAIN =================
   let browser;
   try {
@@ -186,12 +234,17 @@ async function encryptPayload(page, payload, rsaKey) {
     await page.addScriptTag({ path: path.join(__dirname, 'crypto-js.min.js') });
     await page.addScriptTag({ path: path.join(__dirname, 'vendor.encrypt.v2.dll.js') });
 
-const rsaKey = await getRSAKey();
-const geetestSolution = await solveGeetestV4();
+const rsaKey = await retry(
+    () => getRSAKey()
+);
+
+const geetestSolution = await retry(
+    () => solveGeetestV4()
+);
 
 const username = randomUsername();
 const password =
-    process.env.DEFAULT_PASSWORD || "022806";
+    process.env.DEFAULT_PASSWORD;
 const mobile = userData.mobile;
 
 const deviceId = crypto.randomUUID();
@@ -250,7 +303,13 @@ const deviceId = crypto.randomUUID();
     };
 
     console.log('Sending encrypted PUT request to /wps/member/register ...');
-    const response = await axiosInstance.put(REGISTER_URL, { value: des }, { headers });
+    const response = await retry(() =>
+    axiosInstance.put(
+        REGISTER_URL,
+        { value: des },
+        { headers }
+    )
+);
 
     console.log('Response status:', response.status);
     console.log('Response data:', JSON.stringify(response.data, null, 2));
@@ -312,14 +371,12 @@ return {
     }
 } catch (err) {
 
-    console.error('❌ Error:', err.message);
-
-    if (err.response) {
-      console.error('Status:', err.response.status);
-      console.error('Data:', err.response.data);
-    } else if (err.code) {
-      console.error('Code:', err.code);
-    }
+    console.error({
+        code: err.code,
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data
+    });
 
     throw err;
 
