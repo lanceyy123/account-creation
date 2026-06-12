@@ -57,9 +57,8 @@ const proxyAgent = new HttpsProxyAgent(PROXY_URL);
 const axiosInstance = axios.create({
   httpsAgent: proxyAgent,
   httpAgent: proxyAgent,
-  timeout: 45000,
+  timeout: 90000,
 });
-
 function randomUsername(){
 
     const chars =

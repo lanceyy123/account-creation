@@ -520,7 +520,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/save-account", auth, async (req, res) => {
-
+console.log("SAVE ACCOUNT REQUEST");
+console.log(req.body);
     try{
 
 const {
@@ -557,7 +558,7 @@ VALUES
     password
 ]
 );
-
+console.log("ACCOUNT SAVED");
         res.json({
             success:true
         });
