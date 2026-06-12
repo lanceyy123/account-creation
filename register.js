@@ -43,7 +43,7 @@ const RSA_URL = `${SITE_URL}/wps/session/key/rsa`;        // ✅ changed from /w
 const REGISTER_URL = `${SITE_URL}/wps/member/register`;   // ✅ changed from /wps
 
 const PROXY_SERVER =
-    process.env.PROXY_SERVER || "http://proxy.soax.com:5000";
+    process.env.PROXY_SERVER || "proxy.soax.com:5000";
 
 const PROXY_USERNAME =
     process.env.PROXY_USERNAME;
@@ -66,6 +66,14 @@ const axiosInstance = axios.create({
   maxRedirects: 5,
   validateStatus: () => true
 });
+
+const directAxios = axios.create({
+    timeout: 90000,
+    maxRedirects: 5,
+    validateStatus: () => true
+});
+
+
 function randomUsername(){
 
     const chars =
@@ -114,7 +122,9 @@ async function retry(fn, retries = 3){
                 err.code !== "ETIMEDOUT" &&
                 err.code !== "ECONNABORTED" &&
                 err.code !== "EPIPE" &&
-                err.code !== "ENOTFOUND"
+                err.code !== "ENOTFOUND" &&
+                err.code !== "ERR_SOCKET_CLOSED" &&
+                err.message !== "socket hang up"
             ){
                 throw err;
             }
@@ -167,17 +177,23 @@ async function solveGeetestV4() {
       version: 4,
     },
   };
-  const createResp = await axiosInstance.post('https://api.capsolver.com/createTask', createPayload);
+const createResp = await directAxios.post(
+    'https://api.capsolver.com/createTask',
+    createPayload
+);
   if (createResp.data.errorId) throw new Error(`Create task error: ${JSON.stringify(createResp.data)}`);
   const taskId = createResp.data.taskId;
   console.log(`Captcha task ID: ${taskId}`);
 
   for (let i = 0; i < 30; i++) {
     await new Promise(r => setTimeout(r, 3000));
-    const pollResp = await axiosInstance.post('https://api.capsolver.com/getTaskResult', {
-      clientKey: CAPSOLVER_API_KEY,
-      taskId,
-    });
+const pollResp = await directAxios.post(
+    'https://api.capsolver.com/getTaskResult',
+    {
+        clientKey: CAPSOLVER_API_KEY,
+        taskId,
+    }
+);
     const data = pollResp.data;
     if (data.status === 'ready') {
       console.log('✅ Captcha solved');
@@ -241,11 +257,13 @@ try {
                     password: PROXY_PASSWORD
                 },
                 args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-gpu'
-                ]
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--single-process',
+    '--no-zygote'
+]
             });
 
             console.log("Browser launched successfully");
@@ -420,7 +438,9 @@ return {
     throw err;
 
 } finally {
-    if (browser) await browser.close();
+    if (browser?.isConnected()) {
+    await browser.close();
+}
   }
 }
 
