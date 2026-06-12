@@ -7,11 +7,23 @@ import jwt from "jsonwebtoken";
 import { db } from "./db.js";
 import "dotenv/config";
 import { SITES } from "./configs.js";
-import { chromium } from "playwright";
+import rateLimit from "express-rate-limit";
 
 
+
+
+const otpAttempts = new Map();
 const app = express();
+const otpLimiter = rateLimit({
+    windowMs: 3 * 60 * 1000,
+    max: 5,
+    message: {
+        success:false,
+        error:"Too many requests"
+    }
+});
 
+app.use("/verify-otp", otpLimiter);
 app.use(cors());
 app.use(express.json());
 
@@ -23,52 +35,6 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/db-test", async (req, res) => {
-
-    try {
-
-        const result = await db.query(
-            "SELECT NOW()"
-        );
-
-        res.json({
-            success: true,
-            time: result.rows[0]
-        });
-
-    } catch(err) {
-
-        res.status(500).json({
-            success: false,
-            error: err.message
-        });
-
-    }
-
-});
-app.get("/playwright-test", async (req, res) => {
-    try {
-
-        const result = await register(
-            "mvpph",
-            {
-                username: "rtygevrty",
-                password: "022806",
-                mobile: "09653465789"
-            }
-        );
-
-        res.json(result);
-
-    } catch(err) {
-
-        res.json({
-            success:false,
-            error:err.message
-        });
-
-    }
-});
 
 
 function auth(req, res, next){
@@ -114,8 +80,6 @@ try {
 const result = await register(
     req.body.site,
     {
-        username: req.body.username,
-        password: req.body.password,
         mobile: req.body.mobile
     }
 );
@@ -154,7 +118,28 @@ if (!config) {
 console.log("VERIFY REQUEST:");
 console.log("Mobile:", mobile);
 console.log("OTP:", otp);
-console.log("Token:", token);
+const key = `${mobile}_${site}`;
+
+const data =
+    otpAttempts.get(key) || {
+        attempts: 0,
+        blockedUntil: 0
+    };
+
+if(Date.now() < data.blockedUntil){
+
+    return res.status(429).json({
+        success:false,
+        message:
+            `Too many wrong OTP attempts. Try again in ${
+                Math.ceil(
+                    (data.blockedUntil - Date.now()) / 1000
+                )
+            } seconds.`
+    });
+
+}
+
     const response = await axios.post(
         `${config.siteUrl}/wps/v2/verification/sms/verify`,
 		
@@ -190,7 +175,7 @@ console.log(
 );
 
 if(response.data.success){
-
+otpAttempts.delete(key);
     try{
 
         const ticketResponse = await axios.get(
@@ -254,12 +239,51 @@ res.json(response.data);
 
 } catch (err) {
 
-    const apiError = err.response?.data;
+    const {
+        site,
+        mobile
+    } = req.body;
 
-    res.status(
+    const key =
+        `${mobile}_${site}`;
+
+    const data =
+        otpAttempts.get(key) || {
+            attempts: 0,
+            blockedUntil: 0
+        };
+
+    const apiError =
+        err.response?.data;
+
+    const errorText =
+        JSON.stringify(apiError || "")
+            .toLowerCase();
+
+const status =
+    err.response?.status;
+
+if(
+    status === 400 ||
+    status === 401
+){
+    data.attempts++;
+
+    if(data.attempts >= 3){
+
+        data.attempts = 0;
+
+        data.blockedUntil =
+            Date.now() + (3 * 60 * 1000);
+
+    }
+
+    otpAttempts.set(key, data);
+}
+    return res.status(
         err.response?.status || 500
     ).json({
-        success: false,
+        success:false,
         message:
             apiError?.msg ||
             apiError?.message ||
@@ -562,19 +586,15 @@ app.get("/accounts", auth, async (req, res) => {
 
 app.post("/create-account", async (req,res)=>{
 
-    const {
-        site,
-        username,
-        password,
-        mobile
-    } = req.body;
+const {
+    site,
+    mobile
+} = req.body;
 
     const result =
         await register(
             site,
             {
-                username,
-                password,
                 mobile
             }
         );

@@ -708,22 +708,12 @@ if(result.success){
         result.mobile
     );
 
-    localStorage.setItem(
-        "createdUsername",
-        result.username
-    );
 
-    localStorage.setItem(
-        "createdPassword",
-        result.password
-    );
-	
 submitBtn.disabled = false;
 submitBtn.innerHTML = "✨ Create Account";
 document.getElementById("successDetails").innerHTML = `
-    <b>Username:</b> ${result.username}<br>
-    <b>Password:</b> ${result.password}<br>
-    <b>Mobile:</b> ${result.mobile}
+    <b>Mobile:</b> ${result.mobile}<br>
+    Account created successfully.
 `;
 
 document.getElementById("successModal").style.display = "flex";

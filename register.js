@@ -298,8 +298,6 @@ console.log(
 
 return {
     success: true,
-    username,
-    password,
     mobile,
     token
 };
