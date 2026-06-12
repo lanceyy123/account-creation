@@ -531,7 +531,7 @@ const {
     password
 } = req.body;
 
-await db.query(
+const result = await db.query(
 `
 INSERT INTO mvpph_accounts
 (
@@ -549,6 +549,7 @@ VALUES
     $4,
     $5
 )
+RETURNING *
 `,
 [
     req.userId,
@@ -558,6 +559,8 @@ VALUES
     password
 ]
 );
+
+console.log("INSERTED:", result.rows[0]);
 console.log("ACCOUNT SAVED");
         res.json({
             success:true

@@ -363,7 +363,7 @@ const jwtToken =
 
 if(jwtToken){
 
-    await fetch(
+    const saveResponse = await fetch(
         "https://account-creation-production-3c5b.up.railway.app/save-account",
         {
             method:"POST",
@@ -380,8 +380,15 @@ if(jwtToken){
         }
     );
 
-}
+    const saveResult =
+        await saveResponse.json();
 
+    console.log(
+        "SAVE RESULT:",
+        saveResult
+    );
+
+}
 document.getElementById("loading").style.display = "none";
 
 btn.disabled = false;
