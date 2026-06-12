@@ -24,6 +24,15 @@ app.set("trust proxy", 1);
  //   }
 //});
 
+
+if(process.env.MAINTENANCE_MODE === "true"){
+    console.log("Maintenance mode");
+    process.exit(0);
+}
+
+
+
+
 //app.use("/verify-otp", otpLimiter);
 app.use(
     cors({
