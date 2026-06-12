@@ -10,7 +10,7 @@ import { SITES } from "./configs.js";
 import rateLimit from "express-rate-limit";
 
 
-
+const resendOtpMap = new Map();
 
 const otpAttempts = new Map();
 const app = express();
@@ -324,7 +324,25 @@ app.post("/send-otp", async (req, res) => {
             mobile,
             token
         } = req.body;
+const key = `${mobile}_${site}`;
 
+const lastSent =
+    resendOtpMap.get(key);
+
+if(
+    lastSent &&
+    Date.now() - lastSent < 180000
+){
+    return res.status(429).json({
+        success:false,
+        error:"Please wait before requesting another OTP."
+    });
+}
+
+resendOtpMap.set(
+    key,
+    Date.now()
+);
         const config = SITES[site];
 
 if (!config) {
@@ -641,7 +659,51 @@ try{
 }
 
 });
+app.get("/download-accounts", auth, async (req,res)=>{
 
+    const result =
+        await db.query(
+            `
+            SELECT *
+            FROM mvpph_accounts
+            WHERE user_id = $1
+            `,
+            [req.userId]
+        );
+
+    let txt = "";
+
+    result.rows.forEach(acc => {
+
+        txt +=
+`Site: ${acc.site}
+Username: ${acc.username}
+Mobile: ${acc.mobile}
+Password: ${acc.password}
+
+`;
+
+    });
+
+    await db.query(
+        `
+        DELETE FROM mvpph_accounts
+        WHERE user_id = $1
+        `,
+        [req.userId]
+    );
+
+    res.setHeader(
+        "Content-Type",
+        "text/plain"
+    );
+res.setHeader(
+    "Content-Disposition",
+    `attachment; filename=accounts-${Date.now()}.txt`
+);
+    res.send(txt);
+
+});
 
 const PORT = process.env.PORT || 3000;
 

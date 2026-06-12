@@ -451,7 +451,14 @@ th{
     <br>
 
 <h2>All Accounts</h2>
-
+<button
+    id="downloadTxtBtn"
+    style="
+        width:220px;
+        margin-bottom:15px;
+    ">
+    📥 Download & Clear
+</button>
 <div class="accounts-wrapper">
 
 <table id="accountsTable">
@@ -519,11 +526,74 @@ th{
 </div>
 
 <script>
+document
+.getElementById("downloadTxtBtn")
+.addEventListener("click", async ()=>{
 
+    try{
 
+        if(
+            !confirm(
+                "Download and clear all accounts?"
+            )
+        ){
+            return;
+        }
+
+        const response =
+            await fetch(
+                "https://account-creation-production-3c5b.up.railway.app/download-accounts",
+                {
+                    headers:{
+                        Authorization:
+                            localStorage.getItem("jwt")
+                    }
+                }
+            );
+
+        if(!response.ok){
+            alert("Download failed");
+            return;
+        }
+
+        const text =
+            await response.text();
+
+        const blob =
+            new Blob(
+                [text],
+                {
+                    type:"text/plain"
+                }
+            );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const a =
+            document.createElement("a");
+
+        a.href = url;
+        a.download =
+            `accounts-${Date.now()}.txt`;
+
+        a.click();
+
+        setTimeout(() => {
+            loadAccounts();
+        }, 1000);
+
+    }catch(err){
+
+        console.error(err);
+        alert("Download failed");
+
+    }
+
+});
 
 const username =
-    localStorage.getItem("loggedInUser")
+    localStorage.getItem("loggedInUser") || "User";
 
 document.getElementById(
     "welcomeUser"
@@ -595,13 +665,13 @@ tbody.innerHTML += `
 
 }
 
-loadAccounts();
-
 const token = localStorage.getItem("jwt");
 
-if (!token) {
+if(!token){
     window.location.href = "index.html";
 }
+
+loadAccounts();
 document
 .getElementById("site")
 .addEventListener("change", () => {
@@ -761,15 +831,22 @@ document.getElementById("successModal").style.display = "flex";
 
     } catch(err){
 
-    document.getElementById("loading").style.display = "none";
+    document.getElementById(
+        "loading"
+    ).style.display = "none";
 
     submitBtn.disabled = false;
-    submitBtn.innerHTML = "✨ Create Account";
+
+    submitBtn.innerHTML =
+        "✨ Create Account";
+
+    alert(
+        "Server error. Please try again."
+    );
 
     console.error(err);
 
 }
-
 });
 window.onload = () => {
 
