@@ -223,13 +223,52 @@ async function encryptPayload(page, payload, rsaKey) {
 
 
 // ================= MAIN =================
-  let browser;
-  try {
-    browser = await chromium.launch({
-      headless: true,
-      proxy: { server: PROXY_SERVER, username: PROXY_USERNAME, password: PROXY_PASSWORD },
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
-    });
+let browser;
+
+try {
+
+    for(let i = 1; i <= 3; i++){
+
+        try{
+
+            console.log(`Launch attempt ${i}`);
+
+            browser = await chromium.launch({
+                headless: true,
+                proxy: {
+                    server: PROXY_SERVER,
+                    username: PROXY_USERNAME,
+                    password: PROXY_PASSWORD
+                },
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu'
+                ]
+            });
+
+            console.log("Browser launched successfully");
+
+            break;
+
+        }catch(err){
+
+            console.error(
+                `Launch failed ${i}/3`,
+                err.message
+            );
+
+            if(i === 3){
+                throw err;
+            }
+
+            await new Promise(
+                r => setTimeout(r, 3000)
+            );
+        }
+    }
+
     const page = await browser.newPage();
     await page.addScriptTag({ path: path.join(__dirname, 'crypto-js.min.js') });
     await page.addScriptTag({ path: path.join(__dirname, 'vendor.encrypt.v2.dll.js') });
