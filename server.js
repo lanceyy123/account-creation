@@ -253,14 +253,22 @@ if(response.data.success){
 res.json(response.data);
 
 } catch (err) {
-    console.error(err.response?.data || err.message);
 
-    res.status(500).json({
+    const apiError = err.response?.data;
+
+    res.status(
+        err.response?.status || 500
+    ).json({
         success: false,
-        error: err.response?.data || err.message
+        message:
+            apiError?.msg ||
+            apiError?.message ||
+            apiError?.error ||
+            err.message,
+        full: apiError
     });
-}
 
+}
 });
 
 

@@ -7,7 +7,25 @@
 
 
 <style>
+.accounts-wrapper{
+    flex:1;
+    overflow-y:auto;
+    min-height:0;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;
+}
 
+#accountsTable{
+    width:100%;
+    border-collapse:collapse;
+}
+
+#accountsTable thead th{
+    position:sticky;
+    top:0;
+    background:#0f172a;
+    z-index:10;
+}
     .password-box{
     position:relative;
 }
@@ -132,8 +150,12 @@
 
 .dashboard-card{
     flex:2;
+    height:70vh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    min-height:0;
 }
-
 .create-card{
     flex:1;
 }
@@ -149,10 +171,7 @@
 
     align-items:flex-start;
 }
-#accountsTable{
-    max-height:500px;
-    overflow-y:auto;
-}
+
 
 @media (max-width: 900px){
 
@@ -191,11 +210,7 @@
 
 }
 
-#accountsTable{
-    display:block;
-    max-height:400px;
-    overflow-y:auto;
-}
+
 
 body{
     min-height:100vh;
@@ -378,9 +393,16 @@ button:disabled{
 }
 
 table{
-    display:block;
-    overflow-x:auto;
+    width:100%;
     white-space:nowrap;
+}
+
+.accounts-wrapper{
+    flex:1;
+    min-height:0;
+    overflow:auto; /* vertical + horizontal */
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:10px;
 }
 
 th,
@@ -428,9 +450,11 @@ th{
 
     <br>
 
-    <h2>All Accounts</h2>
+<h2>All Accounts</h2>
 
-    <table id="accountsTable">
+<div class="accounts-wrapper">
+
+<table id="accountsTable">
 
 <thead>
 <tr>
@@ -440,9 +464,11 @@ th{
 </tr>
 </thead>
 
-        <tbody></tbody>
+<tbody></tbody>
 
-    </table>
+</table>
+
+</div>
 
 </div>
 

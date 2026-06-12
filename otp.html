@@ -104,6 +104,81 @@ button:disabled{
     color:#22c55e;
     font-weight:600;
 }
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(8px);
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:99999;
+}
+
+.modal-content{
+    width:380px;
+
+    background:#0f172a;
+
+    border:1px solid rgba(255,255,255,.1);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    box-shadow:
+    0 0 40px rgba(139,92,246,.25);
+}
+
+.success-icon{
+    width:70px;
+    height:70px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:35px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #8b5cf6,
+        #ec4899
+    );
+}
+
+#modalBtn{
+    width:100%;
+    height:50px;
+
+    border:none;
+    border-radius:12px;
+
+    color:white;
+    font-weight:700;
+
+    cursor:pointer;
+
+    background:
+    linear-gradient(
+        90deg,
+        #8b5cf6,
+        #ec4899
+    );
+}
+
 </style>
 
 </head>
@@ -401,11 +476,17 @@ document
 
 } else {
 
-    showModal(
-    "Invalid OTP",
-    result.message ||
-    result.error ||
-    "The OTP code is invalid.",
+const errorMessage =
+    result?.message ||
+    result?.msg ||
+    result?.error?.msg ||
+    result?.error?.message ||
+    result?.error ||
+    "Invalid OTP Code";
+
+showModal(
+    "OTP Verification Failed",
+    errorMessage,
     false
 );
 
