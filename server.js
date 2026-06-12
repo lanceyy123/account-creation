@@ -679,7 +679,6 @@ app.get("/download-accounts", auth, async (req,res)=>{
 `Site: ${acc.site}
 Username: ${acc.username}
 Mobile: ${acc.mobile}
-Password: ${acc.password}
 
 `;
 
