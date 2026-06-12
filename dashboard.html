@@ -695,7 +695,23 @@ document.getElementById("loading").style.display = "block";
     }
 );
 
-        const result = await response.json();
+const result = await response.json();
+
+if(!response.ok){
+
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "✨ Create Account";
+
+    document.getElementById("loading").style.display = "none";
+
+    alert(
+        result.message ||
+        result.error ||
+        "Registration failed"
+    );
+
+    return;
+}
 
 if(result.success){
 
@@ -751,14 +767,6 @@ document.getElementById("successModal").style.display = "flex";
     submitBtn.innerHTML = "✨ Create Account";
 
     console.error(err);
-
-    const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err.message ||
-        "Registration failed";
-
-    alert(msg);
 
 }
 

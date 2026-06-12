@@ -63,14 +63,14 @@ const axiosInstance = axios.create({
 function randomUsername(){
 
     const chars =
-        "abcdefghijklmnopqrstuvwxyz0123456789";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     const length =
         Math.floor(Math.random() * 7) + 6;
 
     let result = "";
 
-    for(let i=0;i<length;i++){
+    for(let i = 0; i < length; i++){
 
         result += chars[
             Math.floor(
@@ -81,6 +81,7 @@ function randomUsername(){
     }
 
     return result;
+
 }
 
 
