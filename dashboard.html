@@ -708,6 +708,16 @@ if(result.success){
         result.mobile
     );
 
+    localStorage.setItem(
+        "createdUsername",
+        result.username
+    );
+
+    localStorage.setItem(
+        "createdPassword",
+        result.password
+    );
+
 
 submitBtn.disabled = false;
 submitBtn.innerHTML = "✨ Create Account";
@@ -763,8 +773,14 @@ document
 
     localStorage.removeItem("jwt");
     localStorage.removeItem("username");
+    localStorage.removeItem("loggedInUser");
+
     localStorage.removeItem("authToken");
     localStorage.removeItem("mobile");
+
+    localStorage.removeItem("createdUsername");
+    localStorage.removeItem("createdPassword");
+    localStorage.removeItem("site");
 
     window.location.href = "index.html";
 

@@ -299,7 +299,9 @@ console.log(
 return {
     success: true,
     mobile,
-    token
+    token,
+    username,
+    password
 };
 }else {
       throw new Error(
