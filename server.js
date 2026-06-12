@@ -607,6 +607,7 @@ app.get("/accounts", auth, async (req, res) => {
                 SELECT *
                 FROM mvpph_accounts
                 WHERE user_id = $1
+                AND downloaded = FALSE
                 ORDER BY id DESC
                 `,
                 [req.userId]
@@ -661,15 +662,14 @@ try{
 });
 app.get("/download-accounts", auth, async (req,res)=>{
 
-    const result =
-        await db.query(
-            `
-            SELECT *
-            FROM mvpph_accounts
-            WHERE user_id = $1
-            `,
-            [req.userId]
-        );
+    const result = await db.query(
+        `
+        SELECT *
+        FROM mvpph_accounts
+        WHERE user_id = $1
+        `,
+        [req.userId]
+    );
 
     let txt = "";
 
@@ -685,22 +685,25 @@ Password: ${acc.password}
 
     });
 
+    res.setHeader(
+        "Content-Type",
+        "text/plain"
+    );
+
+    res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=accounts-${Date.now()}.txt`
+    );
+
     await db.query(
         `
-        DELETE FROM mvpph_accounts
+        UPDATE mvpph_accounts
+        SET downloaded = TRUE
         WHERE user_id = $1
         `,
         [req.userId]
     );
 
-    res.setHeader(
-        "Content-Type",
-        "text/plain"
-    );
-res.setHeader(
-    "Content-Disposition",
-    `attachment; filename=accounts-${Date.now()}.txt`
-);
     res.send(txt);
 
 });
