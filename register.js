@@ -37,14 +37,21 @@ export async function register(
         config.captchaId;
 
 // ================= CONFIG =================
-const CAPSOLVER_API_KEY = 'CAP-DEEB0ABB2D8C6CA95E9C61AA28A9D39E80E5C9686F327711C14B06143F766C42';
+const CAPSOLVER_API_KEY =
+    process.env.CAPSOLVER_API_KEY;
 const RSA_URL = `${SITE_URL}/wps/session/key/rsa`;        // ✅ changed from /wps
 const REGISTER_URL = `${SITE_URL}/wps/member/register`;   // ✅ changed from /wps
 
-const PROXY_SERVER = 'http://proxy.soax.com:5000';
-const PROXY_USERNAME = 'package-287084';
-const PROXY_PASSWORD = 'UH851lpEDsT9ihvG';
-const PROXY_URL = `http://${PROXY_USERNAME}:${PROXY_PASSWORD}@proxy.soax.com:5000`;
+const PROXY_SERVER =
+    process.env.PROXY_SERVER;
+
+const PROXY_USERNAME =
+    process.env.PROXY_USERNAME;
+
+const PROXY_PASSWORD =
+    process.env.PROXY_PASSWORD;
+const PROXY_URL =
+`http://${PROXY_USERNAME}:${PROXY_PASSWORD}@${PROXY_SERVER}`;
 
 const proxyAgent = new HttpsProxyAgent(PROXY_URL);
 const axiosInstance = axios.create({
@@ -58,9 +65,12 @@ function randomUsername(){
     const chars =
         "abcdefghijklmnopqrstuvwxyz0123456789";
 
+    const length =
+        Math.floor(Math.random() * 7) + 6;
+
     let result = "";
 
-    for(let i = 0; i < 8; i++){
+    for(let i=0;i<length;i++){
 
         result += chars[
             Math.floor(
@@ -71,7 +81,6 @@ function randomUsername(){
     }
 
     return result;
-
 }
 
 
@@ -177,13 +186,15 @@ async function encryptPayload(page, payload, rsaKey) {
     await page.addScriptTag({ path: path.join(__dirname, 'crypto-js.min.js') });
     await page.addScriptTag({ path: path.join(__dirname, 'vendor.encrypt.v2.dll.js') });
 
-    const rsaKey = await getRSAKey();
-    const geetestSolution = await solveGeetestV4();
+const rsaKey = await getRSAKey();
+const geetestSolution = await solveGeetestV4();
 
 const username = randomUsername();
-const password = "022806";
-const mobile = userData.mobile;           // same as username
-    const deviceId = crypto.randomUUID();
+const password =
+    process.env.DEFAULT_PASSWORD || "022806";
+const mobile = userData.mobile;
+
+const deviceId = crypto.randomUUID();
     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 
     // Full payload from successful registration (including all fields)
@@ -208,7 +219,9 @@ const mobile = userData.mobile;           // same as username
   loginDeviceId: deviceId
 };
 
-    console.log(`Registering: ${username} / ${password} / ${mobile}`);
+    console.log(
+    `Registering: ${username} / ${mobile}`
+);
 
     const { des, rsaEnc } = await encryptPayload(page, payload, rsaKey);
 
@@ -282,10 +295,6 @@ console.log(
 );
   console.log(`✅ SUCCESS: ${username}`);
 
-  fs.appendFileSync(
-    'regaccbackend.csv',
-    `${username},${password},${mobile}\n`
-  );
 
 return {
     success: true,
