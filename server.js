@@ -15,16 +15,16 @@ import rateLimit from "express-rate-limit";
 const otpAttempts = new Map();
 const app = express();
 app.set("trust proxy", 1);
-const otpLimiter = rateLimit({
-    windowMs: 3 * 60 * 1000,
-    max: 5,
-    message: {
-        success:false,
-        error:"Too many requests"
-    }
-});
+//const otpLimiter = rateLimit({
+//    windowMs: 3 * 60 * 1000,
+ //   max: 5,
+  //  message: {
+ //       success:false,
+ //       error:"Too many requests"
+ //   }
+//});
 
-app.use("/verify-otp", otpLimiter);
+//app.use("/verify-otp", otpLimiter);
 app.use(
     cors({
         origin: [
