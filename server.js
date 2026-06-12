@@ -87,7 +87,7 @@ function auth(req, res, next){
 
 }
 
-app.post("/register", async (req, res) => {
+app.post("/register", auth, async (req, res) => {
 try {
 const result = await register(
     req.body.site,
@@ -596,7 +596,7 @@ app.get("/accounts", auth, async (req, res) => {
 
 });
 
-app.post("/create-account", async (req,res)=>{
+app.post("/create-account", auth, async (req,res)=>{
 
 const {
     site,
