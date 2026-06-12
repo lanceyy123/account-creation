@@ -24,7 +24,18 @@ const otpLimiter = rateLimit({
 });
 
 app.use("/verify-otp", otpLimiter);
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "https://accountcreationlnc.netlify.app"
+        ],
+        methods: [
+            "GET",
+            "POST"
+        ],
+        credentials: false
+    })
+);
 app.use(express.json());
 
 
