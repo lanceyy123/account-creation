@@ -43,7 +43,7 @@ const RSA_URL = `${SITE_URL}/wps/session/key/rsa`;        // ✅ changed from /w
 const REGISTER_URL = `${SITE_URL}/wps/member/register`;   // ✅ changed from /wps
 
 const PROXY_SERVER =
-    process.env.PROXY_SERVER;
+    process.env.PROXY_SERVER || "http://proxy.soax.com:5000";
 
 const PROXY_USERNAME =
     process.env.PROXY_USERNAME;
