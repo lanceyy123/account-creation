@@ -100,12 +100,19 @@ console.log("REGISTER RESULT:", result);
     res.json(result);
 
 } catch (err) {
+
     console.error(err);
 
-    res.status(500).json({
+    res.status(
+        err.response?.status || 500
+    ).json({
         success: false,
-        error: err.message
+        message:
+            err.response?.data?.message ||
+            err.response?.data?.msg ||
+            err.message
     });
+
 }
 
 });

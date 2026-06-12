@@ -752,7 +752,13 @@ document.getElementById("successModal").style.display = "flex";
 
     console.error(err);
 
-    alert("Backend connection failed");
+    const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err.message ||
+        "Registration failed";
+
+    alert(msg);
 
 }
 
