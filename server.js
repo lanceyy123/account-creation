@@ -14,6 +14,7 @@ import rateLimit from "express-rate-limit";
 
 const otpAttempts = new Map();
 const app = express();
+app.set("trust proxy", 1);
 const otpLimiter = rateLimit({
     windowMs: 3 * 60 * 1000,
     max: 5,
