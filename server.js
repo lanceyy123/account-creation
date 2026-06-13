@@ -558,6 +558,27 @@ const {
     password
 } = req.body;
 
+
+
+const countResult = await db.query(`
+    SELECT COUNT(*)
+    FROM mvpph_accounts
+`);
+
+const totalAccounts =
+    Number(countResult.rows[0].count);
+
+if(totalAccounts >= 8000){
+
+    return res.status(503).json({
+        success:false,
+        error:"Global account limit reached"
+    });
+
+}
+
+
+
 const result = await db.query(
 `
 INSERT INTO mvpph_accounts
