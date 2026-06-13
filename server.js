@@ -98,15 +98,34 @@ function auth(req, res, next){
 
 app.post("/register", auth, async (req, res) => {
 try {
+
+const countResult = await db.query(`
+    SELECT COUNT(*)
+    FROM mvpph_accounts
+`);
+
+const totalAccounts =
+    Number(countResult.rows[0].count);
+
+if(totalAccounts >= 8000){
+
+    return res.status(503).json({
+        success:false,
+        error:"Global account limit reached"
+    });
+
+}
+
 const result = await register(
     req.body.site,
     {
         mobile: req.body.mobile
     }
 );
+
 console.log("REGISTER RESULT:", result);
 
-    res.json(result);
+res.json(result);
 
 } catch (err) {
 
@@ -123,7 +142,6 @@ console.log("REGISTER RESULT:", result);
     });
 
 }
-
 });
 
 app.post("/verify-otp", async (req, res) => {
@@ -659,6 +677,23 @@ app.get("/accounts", auth, async (req, res) => {
 app.post("/create-account", auth, async (req,res)=>{
 
 try{
+
+    const countResult = await db.query(`
+        SELECT COUNT(*)
+        FROM mvpph_accounts
+    `);
+
+    const totalAccounts =
+        Number(countResult.rows[0].count);
+
+    if(totalAccounts >= 8000){
+
+        return res.status(503).json({
+            success:false,
+            error:"Global account limit reached"
+        });
+
+    }
 
     const {
         site,
