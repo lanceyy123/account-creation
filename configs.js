@@ -69,7 +69,7 @@ applelucky: {
   
     captchaRequired: false,
     captchaId: null,
-    domain: "applelucky",
+    domain: "applelucky8",
     affiliateCode: "www"
 }
 
