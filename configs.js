@@ -1,6 +1,8 @@
 export const SITES = {
 
   worldcup: {
+    enabled: false,
+
     name: "WorldCup",
     siteUrl: "https://www.worldcupph.ph",
     merchant: "wlcphtlbf3",
@@ -12,10 +14,25 @@ export const SITES = {
     stripLeadingZero: true,
 
     domain: "worldcup",
-    affiliateCode: "www"
+    affiliateCode: "www",
+
+    isAppPromo: "Y",
+
+    promoTypes: {
+      wheel: "PRIZE_WHEEL",
+      freeSpin: null
+    },
+
+    promoEndpoints: {
+      list: "/wps/relay/PROMOFE_getClaimTicketList",
+      wheel: "/wps/relay/PROMOFE_claimTicket",
+      freeSpin: null
+    }
   },
 
   luckycalico: {
+    enabled: false,
+
     name: "LuckyCalico",
     siteUrl: "https://www.luckycalico.ph",
     merchant: "luckycaf3",
@@ -27,10 +44,25 @@ export const SITES = {
     stripLeadingZero: false,
 
     domain: "luckycalico",
-    affiliateCode: "www"
+    affiliateCode: "www",
+
+    isAppPromo: "N",
+
+    promoTypes: {
+      wheel: "PRIZE_WHEEL",
+      freeSpin: "FREE_SPIN"
+    },
+
+    promoEndpoints: {
+      list: "/wps/relay/PROMOFE_getClaimTicketList",
+      wheel: "/wps/relay/PROMOFE_claimTicket",
+      freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
+    }
   },
 
   mvpph: {
+    enabled: false,
+
     name: "MVPPH",
     siteUrl: "https://www.mvpph.vip",
     merchant: "mvpphtlbs2",
@@ -42,10 +74,25 @@ export const SITES = {
     stripLeadingZero: false,
 
     domain: "mvpph",
-    affiliateCode: "www"
+    affiliateCode: "www",
+
+    isAppPromo: "N",
+
+    promoTypes: {
+      wheel: "PRIZE_WHEEL",
+      freeSpin: "FREE_SPIN"
+    },
+
+    promoEndpoints: {
+      list: "/wps/relay/PROMOFE_getClaimTicketList",
+      wheel: "/wps/relay/PROMOFE_claimTicket",
+      freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
+    }
   },
 
   roostervolt: {
+    enabled: false,
+
     name: "RoosterVolt",
     siteUrl: "https://www.roostervolt.win",
     merchant: "72phtlbs2",
@@ -57,32 +104,50 @@ export const SITES = {
     stripLeadingZero: false,
 
     domain: "roostervolt",
-    affiliateCode: "www"
-  }, 
-applelucky: {
+    affiliateCode: "www",
+
+    isAppPromo: "N",
+
+    promoTypes: {
+      wheel: "PRIZE_WHEEL",
+      freeSpin: "FREE_SPIN"
+    },
+
+    promoEndpoints: {
+      list: "/wps/relay/PROMOFE_getClaimTicketList",
+      wheel: "/wps/relay/PROMOFE_claimTicket",
+      freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
+    }
+  },
+
+  applelucky: {
+    enabled: true,
+
     name: "AppleLucky",
     siteUrl: "https://www.applelucky8.com",
     merchant: "eag99tlbs2",
 
-    mobileLength: 10,
-    stripLeadingZero: true,
-  
     captchaRequired: false,
     captchaId: null,
+
+    mobileLength: 10,
+    stripLeadingZero: true,
+
     domain: "applelucky8",
     affiliateCode: "www",
 
+    isAppPromo: "Y",
+
     promoTypes: {
-        wheel: "PRIZE_WHEEL",
-        freeSpin: "FREE_SPIN"
+      wheel: "PRIZE_WHEEL",
+      freeSpin: "FREE_SPIN"
     },
 
     promoEndpoints: {
-        list: "/wps/relay/PROMOFE_getClaimTicketList",
-        wheel: "/wps/relay/PROMOFE_claimTicket",
-        freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
+      list: "/wps/relay/PROMOFE_getClaimTicketList",
+      wheel: "/wps/relay/PROMOFE_claimTicket",
+      freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
     }
-}
-
+  }
 
 };

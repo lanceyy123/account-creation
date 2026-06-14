@@ -96,9 +96,27 @@ function auth(req, res, next){
 
 }
 
+
+
 app.post("/register", auth, async (req, res) => {
 try {
 
+const config = SITES[req.body.site];
+
+if (!config) {
+    return res.status(400).json({
+        success: false,
+        error: "Invalid site"
+    });
+}
+
+if (config.enabled === false) {
+    return res.status(403).json({
+        success: false,
+        error: "This site is currently disabled"
+    });
+}
+    
 const countResult = await db.query(`
     SELECT COUNT(*)
     FROM mvpph_accounts
@@ -152,7 +170,6 @@ const {
     otp,
     token
 } = req.body;
-
 const config = SITES[site];
 
 if (!config) {
@@ -161,6 +178,14 @@ if (!config) {
         error: "Invalid site"
     });
 }
+
+if (config.enabled === false) {
+    return res.status(403).json({
+        success: false,
+        error: "This site is currently disabled"
+    });
+}
+
 console.log("VERIFY REQUEST:");
 console.log("Mobile:", mobile);
 console.log("OTP:", otp);
@@ -224,8 +249,22 @@ if(response.data.success){
     otpAttempts.delete(key);
     
     try {
+
+
+        if (
+    !config.promoTypes ||
+    !config.promoEndpoints
+) {
+    return res.json(response.data);
+}
+
+
+
+
+
         // 1. Kunin ang listahan ng available na tickets
-        const isAppParam = (site === "applelucky") ? "Y" : "N";
+        const isAppParam =
+    config.isAppPromo || "N";
         const ticketResponse = await axios.get(
             `${config.siteUrl}${config.promoEndpoints.list}?isApp=${isAppParam}&status=AVAILABLE&isAll=N&_=${Date.now()}`,
             {
@@ -711,7 +750,21 @@ try{
         site,
         mobile
     } = req.body;
+const config = SITES[site];
 
+if (!config) {
+    return res.status(400).json({
+        success: false,
+        error: "Invalid site"
+    });
+}
+
+if (config.enabled === false) {
+    return res.status(403).json({
+        success: false,
+        error: "This site is currently disabled"
+    });
+}
     const result =
         await register(
             site,
