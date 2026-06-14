@@ -295,10 +295,15 @@ const rsaKey = await retry(
     () => getRSAKey()
 );
 
-const geetestSolution = await retry(
-    () => solveGeetestV4()
-);
+let geetestSolution = null;
 
+if (config.captchaRequired) {
+
+    geetestSolution = await retry(
+        () => solveGeetestV4()
+    );
+
+}
 const username = randomUsername();
 const password =
     process.env.DEFAULT_PASSWORD;
@@ -308,7 +313,7 @@ const deviceId = crypto.randomUUID();
     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 
     // Full payload from successful registration (including all fields)
-    const payload = {
+const payload = {
   username,
   password,
   confirmPassword: password,
@@ -318,16 +323,22 @@ const deviceId = crypto.randomUUID();
   affiliateCode: config.affiliateCode,
   domain: config.domain,
 
-  geetestValidateV4: {
-    captcha_id: CAPTCHA_ID,
-    ...geetestSolution
-  },
-
   login: true,
   registerUrl: SITE_URL,
-  registerMethod: 'WEB',
+  registerMethod: "WEB",
   loginDeviceId: deviceId
 };
+
+// Add captcha only if required
+if (
+  config.captchaRequired &&
+  geetestSolution
+) {
+  payload.geetestValidateV4 = {
+    captcha_id: CAPTCHA_ID,
+    ...geetestSolution
+  };
+}
 
     console.log(
     `Registering: ${username} / ${mobile}`
