@@ -293,25 +293,27 @@ async function solveWorldCupCaptcha(
             "base64"
         );
 
-    const processed =
-        await sharp(imageBuffer)
-            .grayscale()
-            .normalise()
-            .threshold(105)
-            .resize({
-                width: 600
-            })
-            .toBuffer();
+const processed = await sharp(imageBuffer)
+    .grayscale()
+    .normalize()
+    .sharpen()
+    .median(1)
+    .threshold(140)
+    .resize({
+        width: 1200,
+        kernel: sharp.kernel.nearest
+    })
+    .png()
+    .toBuffer();
 
-    const result =
-        await Tesseract.recognize(
-            processed,
-            "eng",
-            {
-                tessedit_char_whitelist:
-                    "0123456789"
-            }
-        );
+const result = await Tesseract.recognize(
+    processed,
+    "eng",
+    {
+        logger: m => {},
+        tessedit_char_whitelist: "0123456789"
+    }
+);
 
     const digits =
         result.data.text
