@@ -7,14 +7,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { SITES } from "./configs.js";
-import sharp from "sharp";
-import Tesseract from "tesseract.js";
-
-
-
-
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -245,89 +237,6 @@ async function encryptPayload(page, payload, rsaKey) {
 }
 
 
-// ================= WORLDCUP CAPTCHA =================
-
-async function getWorldCupCaptcha() {
-
-    const response = await axiosInstance.get(
-        `${SITE_URL}/wps/captcha`,
-        {
-            headers: {
-                Accept: "application/json, text/plain, */*",
-                Referer: `${SITE_URL}/`,
-                Merchant: MERCHANT,
-                Language: "EN",
-                Device: "web",
-                "User-Agent":
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0"
-            }
-        }
-    );
-
-    if (
-        !response.data?.success
-    ) {
-        throw new Error(
-            "Failed to get captcha"
-        );
-    }
-
-    let imageBase64 =
-        response.data.value || "";
-
-    if (imageBase64.includes(",")) {
-        imageBase64 =
-            imageBase64.split(",")[1];
-    }
-
-    return imageBase64;
-}
-
-async function solveWorldCupCaptcha(
-    imageBase64
-) {
-
-    const imageBuffer =
-        Buffer.from(
-            imageBase64,
-            "base64"
-        );
-
-    const processed =
-        await sharp(imageBuffer)
-            .grayscale()
-            .normalise()
-            .threshold(105)
-            .resize({
-                width: 600
-            })
-            .toBuffer();
-
-    const result =
-        await Tesseract.recognize(
-            processed,
-            "eng",
-            {
-                tessedit_char_whitelist:
-                    "0123456789"
-            }
-        );
-
-    const digits =
-        result.data.text
-            .replace(/[^0-9]/g, "")
-            .substring(0, 5);
-
-    console.log(
-        "🧠 OCR:",
-        result.data.text,
-        "=>",
-        digits
-    );
-
-    return digits;
-}
-
 
 // ================= MAIN =================
 let browser;
@@ -387,28 +296,12 @@ const rsaKey = await retry(
 );
 
 let geetestSolution = null;
-let worldCupCaptcha = null;
 
-if (site === "worldcup") {
+if (config.captchaRequired) {
 
-    const imageBase64 =
-        await retry(
-            () => getWorldCupCaptcha()
-        );
-
-    worldCupCaptcha =
-        await solveWorldCupCaptcha(
-            imageBase64
-        );
-
-} else if (
-    config.captchaRequired
-) {
-
-    geetestSolution =
-        await retry(
-            () => solveGeetestV4()
-        );
+    geetestSolution = await retry(
+        () => solveGeetestV4()
+    );
 
 }
 const username = randomUsername();
@@ -455,21 +348,14 @@ const payload = {
 };
 
 // Add captcha only if required
-if (site === "worldcup") {
-
-    payload.captcha =
-        worldCupCaptcha;
-
-} else if (
-    config.captchaRequired &&
-    geetestSolution
+if (
+  config.captchaRequired &&
+  geetestSolution
 ) {
-
-    payload.geetestValidateV4 = {
-        captcha_id: CAPTCHA_ID,
-        ...geetestSolution
-    };
-
+  payload.geetestValidateV4 = {
+    captcha_id: CAPTCHA_ID,
+    ...geetestSolution
+  };
 }
 
     console.log(
