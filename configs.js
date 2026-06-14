@@ -25,6 +25,15 @@ export const SITES = {
     captchaId: "10578edd4000cf44530a193e12f275de",
     domain: "luckycalico",
     affiliateCode: "www"
+  },
+
+  worldcup: {
+    name: "WorldCup",
+    siteUrl: "https://www.worldcupph.ph",
+    merchant: "wlcphtlbf3",
+    captchaId: "cfe7666a69824e0785dadd777529b749",
+    domain: "worldcup",
+    affiliateCode: "www"
   }
 
 };
