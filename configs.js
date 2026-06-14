@@ -5,6 +5,9 @@ export const SITES = {
     siteUrl: "https://www.worldcupph.ph",
     merchant: "wlcphtlbf3",
 
+    captchaRequired: false,
+    captchaId: null,
+
     mobileLength: 10,
     stripLeadingZero: true,
 
@@ -55,6 +58,20 @@ export const SITES = {
 
     domain: "roostervolt",
     affiliateCode: "www"
-  }
+  }, 
+applelucky: {
+    name: "AppleLucky",
+    siteUrl: "https://www.applelucky8.com",
+    merchant: "eag99tlbs2",
+
+    mobileLength: 10,
+    stripLeadingZero: true,
+  
+    captchaRequired: false,
+    captchaId: null,
+    domain: "applelucky",
+    affiliateCode: "www"
+}
+
 
 };
