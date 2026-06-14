@@ -5,8 +5,8 @@ export const SITES = {
     siteUrl: "https://www.worldcupph.ph",
     merchant: "wlcphtlbf3",
 
-    captchaRequired: false,
-    captchaId: null,
+    captchaRequired: true,
+    captchaId: "cfe7666a69824e0785dadd777529b749",
 
     mobileLength: 10,
     stripLeadingZero: true,
