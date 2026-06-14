@@ -307,7 +307,25 @@ if (config.captchaRequired) {
 const username = randomUsername();
 const password =
     process.env.DEFAULT_PASSWORD;
-const mobile = userData.mobile;
+let mobile = userData.mobile;
+
+// Site-specific mobile formatting
+if (
+    config.stripLeadingZero &&
+    mobile.startsWith("0")
+) {
+    mobile = mobile.substring(1);
+}
+
+// Optional length validation
+if (
+    config.mobileLength &&
+    mobile.length !== config.mobileLength
+) {
+    throw new Error(
+        `${config.name} requires exactly ${config.mobileLength} digits`
+    );
+}
 
 const deviceId = crypto.randomUUID();
     const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';

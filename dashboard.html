@@ -523,7 +523,38 @@ th{
 </div>
 </div>
 
+
+
+
 <script>
+
+
+const SITE_RULES = {
+
+    worldcup: {
+        length: 10,
+        placeholder: "9123456789"
+    },
+
+    luckycalico: {
+        length: 10,
+        placeholder: "9762086953"
+    },
+
+    mvpph: {
+        length: 11,
+        placeholder: "09123456789"
+    },
+
+    roostervolt: {
+        length: 11,
+        placeholder: "09123456789"
+    }
+
+};
+
+
+
 document
 .getElementById("downloadTxtBtn")
 .addEventListener("click", async ()=>{
@@ -670,6 +701,8 @@ if(!token){
 }
 
 loadAccounts();
+
+
 document
 .getElementById("site")
 .addEventListener("change", () => {
@@ -680,19 +713,26 @@ document
     const mobile =
         document.getElementById("mobile");
 
-    if(site === "luckycalico"){
+    const rule =
+        SITE_RULES[site];
 
-        mobile.maxLength = 10;
-        mobile.placeholder = "9762086953";
+    if(!rule) return;
 
-    }else{
+    mobile.maxLength =
+        rule.length;
 
-        mobile.maxLength = 11;
-        mobile.placeholder = "09123456789";
-
-    }
+    mobile.placeholder =
+        rule.placeholder;
 
 });
+
+document
+.getElementById("site")
+.dispatchEvent(
+    new Event("change")
+);
+
+
 document.getElementById("registerForm")
 .addEventListener("submit", async (e) => {
 
@@ -711,24 +751,18 @@ document.getElementById("registerForm")
     const site =
     document.getElementById("site").value;
 
-if(site === "luckycalico"){
+const rule =
+    SITE_RULES[site];
 
-    if(!/^\d{10}$/.test(mobile)){
-        alert(
-            "LuckyCalico mobile number must be exactly 10 digits."
-        );
-        return;
-    }
-
-}else{
-
-    if(!/^\d{10,11}$/.test(mobile)){
-        alert(
-            "Mobile number must be 10 or 11 digits."
-        );
-        return;
-    }
-
+if(
+    !new RegExp(
+        `^\\d{${rule.length}}$`
+    ).test(mobile)
+){
+    alert(
+        `Mobile number must be exactly ${rule.length} digits.`
+    );
+    return;
 }
 
     
