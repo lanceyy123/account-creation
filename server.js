@@ -221,13 +221,15 @@ console.log(
 );
 
 if(response.data.success){
-otpAttempts.delete(key);
-    try{
-
+    otpAttempts.delete(key);
+    
+    try {
+        // 1. Kunin ang listahan ng available na tickets
+        const isAppParam = (site === "applelucky") ? "Y" : "N";
         const ticketResponse = await axios.get(
-            `${config.siteUrl}/wps/relay/PROMOFE_getClaimTicketList?isApp=N&status=AVAILABLE&isAll=N&_=${Date.now()}`,
+            `${config.siteUrl}${config.promoEndpoints.list}?isApp=${isAppParam}&status=AVAILABLE&isAll=N&_=${Date.now()}`,
             {
-                headers:{
+                headers: {
                     Authorization: token,
                     Merchant: config.merchant,
                     Language: "TY"
@@ -235,50 +237,60 @@ otpAttempts.delete(key);
             }
         );
 
-        const registerBonus =
-            ticketResponse.data.value.find(
-                x => x.name === "Register Bonus"
-            );
+        const tickets = ticketResponse.data.value || [];
+        const promoTypes = config.promoTypes;
 
-        if(registerBonus){
+        // 2. Kunin ang wheel ticket at free spin ticket
+        const wheelTicket = tickets.find(t => t.type === promoTypes.wheel);
+        const freeSpinTicket = tickets.find(t => t.type === promoTypes.freeSpin);
 
-            const claimResponse =
-                await axios.post(
-                    `${config.siteUrl}/wps/relay/PROMOFE_claimTicket`,
-                    {
-                        transactionId:
-                            registerBonus.transactionId,
-
-                        isApp:"N"
-                    },
-                    {
-                        headers:{
-                            Authorization: token,
-                            Merchant: config.merchant,
-                            Language: "TY",
-                            Origin: config.siteUrl,
-                            Referer: `${config.siteUrl}/index`
-                        }
+        // 3. I-claim ang wheel prize (kung meron)
+        if (wheelTicket) {
+            const claimPayload = {
+                transactionId: wheelTicket.transactionId,
+                isApp: isAppParam
+            };
+            const claimResponse = await axios.post(
+                `${config.siteUrl}${config.promoEndpoints.wheel}`,
+                claimPayload,
+                {
+                    headers: {
+                        Authorization: token,
+                        Merchant: config.merchant,
+                        Language: "TY",
+                        Origin: config.siteUrl,
+                        Referer: `${config.siteUrl}/index`
                     }
-                );
-
-            console.log(
-                "BONUS CLAIMED:",
-                claimResponse.data
+                }
             );
-
+            console.log(`✅ ${site} WHEEL claimed:`, claimResponse.data);
         }
 
-    }catch(claimErr){
+        // 4. I-claim ang free spin (kung meron at may endpoint)
+        if (freeSpinTicket && config.promoEndpoints.freeSpin) {
+            const freeSpinPayload = {
+                transactionId: freeSpinTicket.transactionId,
+                isApp: isAppParam
+            };
+            const freeSpinResponse = await axios.post(
+                `${config.siteUrl}${config.promoEndpoints.freeSpin}`,
+                freeSpinPayload,
+                {
+                    headers: {
+                        Authorization: token,
+                        Merchant: config.merchant,
+                        Language: "TY",
+                        Origin: config.siteUrl,
+                        Referer: `${config.siteUrl}/index`
+                    }
+                }
+            );
+            console.log(`✅ ${site} FREE SPIN claimed:`, freeSpinResponse.data);
+        }
 
-        console.error(
-            "CLAIM ERROR:",
-            claimErr.response?.data ||
-            claimErr.message
-        );
-
+    } catch (claimErr) {
+        console.error(`❌ ${site} promo claim error:`, claimErr.response?.data || claimErr.message);
     }
-
 }
 
 res.json(response.data);

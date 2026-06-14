@@ -70,7 +70,18 @@ applelucky: {
     captchaRequired: false,
     captchaId: null,
     domain: "applelucky8",
-    affiliateCode: "www"
+    affiliateCode: "www",
+
+    promoTypes: {
+        wheel: "PRIZE_WHEEL",
+        freeSpin: "FREE_SPIN"
+    },
+
+    promoEndpoints: {
+        list: "/wps/relay/PROMOFE_getClaimTicketList",
+        wheel: "/wps/relay/PROMOFE_claimTicket",
+        freeSpin: "/wps/relay/PROMOFE_claimFreeSpinTicketV2"
+    }
 }
 
 
